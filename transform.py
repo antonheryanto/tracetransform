@@ -21,7 +21,7 @@ class TraceTransform(nn.Module):
             Tensor: Grayscaled image.
         """
         c,h,w = imgs.size()
-        angle_step = 360 / self.angle_count
+        angle_step = 180 / self.angle_count
         sinogram = torch.zeros([self.num_function, self.angle_count, self.line_count])
         imgr = torch.zeros([self.angle_count, h, w])
         for r in range(self.angle_count):

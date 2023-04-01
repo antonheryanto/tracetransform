@@ -102,13 +102,14 @@ class ConvNet8(JawiNet):
         )
 
 class TraceLineNet(JawiNet):
-    def __init__(self, is_multi = False, hidden1=1024, hidden2=256):
+    def __init__(self, size:int, in_channel = 4, is_multi = False, hidden1=1024, hidden2=256):
     #def __init__(self, is_multi = False, hidden1=512, hidden2=128):
         # super(TraceNet, self).__init__(4 * 64 * 64, is_multi, hidden1, hidden2)
-        super(TraceLineNet, self).__init__(4 * 32 * 32, is_multi, hidden1, hidden2)
+        image_size = int(size / 2)
+        super(TraceLineNet, self).__init__(in_channel * image_size * image_size, is_multi, hidden1, hidden2)
         self.features = nn.Sequential(
-            T.TraceLine2d(64),
-            nn.BatchNorm2d(4),
+            T.TraceLine2d(size),
+            nn.BatchNorm2d(in_channel),
             nn.ReLU(),            
             nn.MaxPool2d(2, 2),
             nn.Dropout(0.2)

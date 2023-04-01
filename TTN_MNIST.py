@@ -14,13 +14,11 @@ device = torch.device("cpu" if not torch.cuda.is_available() else 'cuda')
 batch_size_train = 64#16
 batch_size_test = 1000
 
-
-
 tx = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.1307,), (0.3081,)),
-    transforms.Resize((64,64)),
-    TraceTransform()
+    # transforms.Resize((64,64)),
+    TraceTransform(28,28)
 ])
 
 device = torch.device("cpu" if not torch.cuda.is_available() else 'cuda')
@@ -62,37 +60,24 @@ def evaluate(model, device):
             outputs = model(inputs)
             _, preds = torch.max(outputs, 1)
             test_corrects += torch.sum(preds == labels.data).item()
-            print(test_corrects)
+            print(f"{test_corrects}/{total}:{test_corrects/total}")
     return test_corrects, total
 
 def tainingTTN():
     
     #lossFn = nn.CrossEntropyLoss()
     
-    models = [
-        M.FFNNTF,
-        M.FFNNOS,
-        M.ConvNet1,
-        M.ConvNet3,
-        M.ConvNet8, # classifier
-        M.TraceLineNet,
-        M.TraceAngleNet,
-        M.TraceLineAngleNet,# features
-        M.HybridParallel,
-        M.HybridBefore,
-        M.HybridAfter
-    ]
     learning_rate = 1e-2
     step = 0
     step_loss = 1
-    step_check = 10
+    step_check = 100
     decay_steps = 10000
     decay_rate = 0.9
     best_accuracy = 0.0
     patience = 10
     duration = 0.0
     is_multi=False
-    model = models[5](is_multi) # model yg di pake
+    model = M.TraceLineNet(28) # model yg di pake
     model.to(device)
     optimizer = optim.SGD(model.parameters(),
                           lr=learning_rate,
@@ -143,11 +128,8 @@ def tainingTTN():
                 patience = patience
                 best_accuracy = accuracy
                 
-                #torch.save(
-                #    model.state_dict(),
-                #    model_file
-                #)
-                evaluate(model, device, )
+                torch.save(model.state_dict(), "model.pth")
+                #evaluate(model, device, )
             else:
                 patience -= 1
 
@@ -156,6 +138,8 @@ def tainingTTN():
                 return
 
 if __name__ == '__main__':
-    #model = M.FFNNTF()
-    #print(model)
+    # model = M.TraceLineNet(28)
+    # x = torch.rand(1,4, 28, 28)
+    # y = model(x)
+    # print(y.shape)
     tainingTTN()

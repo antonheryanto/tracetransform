@@ -5,8 +5,8 @@ from torchvision import datasets, models, transforms
 
 tx = transforms.Compose([transforms.ToTensor(),
   transforms.Normalize((0.1307,), (0.3081,)),
-  transforms.Resize((64,64)),
-  TraceTransform()])
+  # transforms.Resize((64,64)),
+  TraceTransform(28,28)])
 
 device = torch.device("cpu" if not torch.cuda.is_available() else 'cuda')
 batch_size_train = 64#16
